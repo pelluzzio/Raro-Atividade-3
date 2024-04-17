@@ -1,61 +1,48 @@
-describe('Login de Usuário', () => {
-    var nome;
-    var email;
-    var senha;
+describe ('busca por usuarios', ()=>{
     var token;
-    var id;
+    var userId;
+   
+    before('criar usuario', () => {
+      cy.request({
+        method: 'POST',
+        url: 'https://raromdb-3c39614e42d4.herokuapp.com/api/users',
+        body: {
+          "name": "string",
+          "email": "string@yahoo.com.br",
+          "password": "string",
+        }  
+      }).then((response) => {
+        userId = response.body.id
+      })
+    });//end of antes 
+   
+   
+    before('Logar', () => {
+      cy.request({
+        method: 'POST',
+        url:'/api/auth/login',
+        body: {
+          "email": "string@yahoo.com.br",
+          "password": "string"
+        }
+      }).then((response)=>{
+        token = response.body.accessToken})
+        
+  
+    })//end of antes
+  
+    after('Inativar',() => {
+      cy.request({
+        method: 'PATCH',
+        url: '/api/users/inactivate',
+        headers: {
+          Authorization: "Bearer " + token}
+  
+      })
+  
+    })//end of dps
 
-    before('Criar Usuario',() => {
-        cy.log('Criar Usuario')
-        cy.request({
-            method: 'POST',
-            url: '/api/users',
-            body: {
-                nome: 'Sung Ji Woo',
-                email: 'monarcadastrevas@gmail.com',
-                senha: '123456'
-            }
-        }).then((resposta) => {
-            id = resposta.body.id
-            email = resposta.body.email
-            nome = resposta.body.nome
-            senha = resposta.body.senha
-        });
 
-        cy.log('Login de usuário')
-        cy.request({
-            method: 'POST',
-            url: '/api/auth/login',
-            body: {
-                email: 'monarcadastrevas@gmail.com',
-                senha: '123456'
-            }
-        }).then((resposta) => {
-            token = resposta.body.accessToken
-            cy.log(token)
-            cy.log('Permissão de admin')
-            cy.request({
-                method: 'PATCH',
-                url: 'https://raromdb-3c39614e42d4.herokuapp.com/api/users/admin',
-                headers: {
-                    Authorization: "Bearer " + token
-                }
-            })
-        })
-    });
-
-    after('Apaga', () => {
-        cy.log('Deletar usuário')
-        cy.request({
-            method: 'DELETE',
-            url: '/api/users/' + id,
-            headers: {
-            Authorization: 'Bearer ' + token
-            }
-        })
-    });
-
-})
     it('Login sem email', () => {
         cy.request({
             method: 'POST',
@@ -129,3 +116,4 @@ describe('Login de Usuário', () => {
         })
     })
 
+})
