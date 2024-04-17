@@ -1,0 +1,17 @@
+{
+  "name": "teste-api-cypress",
+  "version": "1.0.0",
+  "description": "teste de api comcypress",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gabi",
+  "license": "ISC",
+  "dependencies": {
+    "cypress": "^13.7.2"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^8.4.1"
+  }
+}
