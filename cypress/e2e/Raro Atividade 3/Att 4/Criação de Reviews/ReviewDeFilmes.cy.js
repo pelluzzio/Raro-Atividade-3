@@ -1,6 +1,18 @@
-describe ('busca por usuarios como adm', ()=>{
+describe ('Reviews: busca e criação', ()=>{
   var token;
-  var userId;
+  var idFilme;
+  
+  
+  
+  before('Achar Filmes', () => {
+    cy.request({
+      method: 'GET',
+      url: '/api/movies',
+
+    }).then((response) => {
+      idFilme = response.body[0].id;
+      });
+    })
  
   before('criar usuario', () => {
     cy.request({
@@ -11,8 +23,6 @@ describe ('busca por usuarios como adm', ()=>{
         "email": "string@yahoo.com.br",
         "password": "string",
       }  
-    }).then((response) => {
-      userId = response.body.id
     })
   });//end of antes 
  
@@ -49,22 +59,26 @@ describe ('busca por usuarios como adm', ()=>{
 
   })//end of dps
 
-  it ('Busca geral', ()=>{
+  it ('Criar uma review', ()=>{
   cy.request ({
-    method:'GET',
-    url:'/api/users',
+    method:'POST',
+    url:'/api/users/review',
+    body: {
+      "movieId": idFilme,
+      "score": 5,
+      "reviewText": "WOW WOW"},
     headers: {
       Authorization: "Bearer " + token}
   }).then((response) => {
-    expect(response.status).to.eq(200)
+    expect(response.status).to.eq(201)
   })
 
-});//end da geral
+});//end da creation
 
-it('buscar via id',() =>{
+it('buscar por meus reviews',() =>{
   cy.request({
     method:'GET',
-    url:'/api/users/' + userId,
+    url:'/api/users/review/all',
     headers:{
       Authorization: "Bearer " + token}
 
@@ -72,7 +86,7 @@ it('buscar via id',() =>{
     expect(response.status).to.eq(200)
   })
 
-})//end of id
+})//end of lista 
 
 
 })
